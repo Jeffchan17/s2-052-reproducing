@@ -8,8 +8,6 @@
 
 2017年9月5日，Apache Struts发布最新安全公告，Apache Struts2的`REST`插件存在远程代码执行的高危漏洞，该漏洞由lgtm.com的安全研究员汇报，漏洞编号为CVE-2017-9805（S2-052）。
 
-Github项目地址: [Vancir/s2-052-reproducing](https://github.com/Vancir/s2-052-reproducing)
-
 ## 0x01 漏洞影响
 
 启用Struts REST插件并使用XStream组件对XML进行反序列操作时，未对数据内容进行有效验证，可被攻击者进行远程代码执行攻击(RCE)。
@@ -43,30 +41,7 @@ docker pull vancir/s2-052:2.5.12 # 从docker cloud上拉取仓库vancir/s2-052(s
 由于`JDK 8u151`文件较大，因此首先需要使用者从[Oracle官网](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)下载并移动到`src`文件夹下(md5sum: `774d8cb584d9ebedef8eba9ee2dfe113`  jdk-8u151-linux-x64.tar.gz)。
 
 然后切换到dockerfile文件所在路径，运行以下命令
-
-``` bash
-docker build -t="vancir/s2-052:2.5.12" .
-```
-
-* 创建并运行docker容器
-
-``` bash
-docker run --name demo -d -p 80:8080 vancir/s2-052:2.5.12 
-```
-
-`--name`选项设置docker容器的名称为demo，`-d`选项设置容器在后台运行，`-p`选项设置容器内8080端口映射为本地的80端口，`vancir/s2-052:2.5.12`是我们的docker镜像
-
-docker容器运行完成后，访问`http://localhost`观察到如下页面，即完成实验环境的搭建步骤。
-
-![tomcat.png](/src/tomcat.png)
-
-## 0x03 漏洞攻击复现
-
-### 使用burpsuite直接发送恶意xml
-
-接下来我们就要使用burpsuite发送恶意xml给服务器并反弹一个shell。
-
-首先打开`burp suite`(需到[官网](https://portswigger.net/burp/freedownload)下载安装)，切换到`Repeater`选项卡
+er.net/burp/freedownload)下载安装)，切换到`Repeater`选项卡
 
 将`payload.xml`里的内容全部复制粘贴到`Request`内容框中，并设置右上角的`Target`为`127.0.0.1:80`
 
@@ -114,7 +89,6 @@ msf exploit(struts2_rest_xstream) > show options
 msf exploit(struts2_rest_xstream) > exploit
 ```
 
-> Todo: Wireshark观察攻击过程
 
 ## 0x04 漏洞分析
 
